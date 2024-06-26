@@ -1,10 +1,8 @@
-#include <Windows.h>
-
-#include <MinHook.h>
+#include "hook/hook.hpp"
 
 BOOL WINAPI DllMain( HINSTANCE, DWORD r, LPVOID) {
     if( r == 1) {
-        MessageBoxA(nullptr, "hello", "status", MB_OK);
+        hooks::setup( );
     }
 
     return true;
