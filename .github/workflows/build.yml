@@ -18,18 +18,28 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        submodules: true
 
     - name: Set up Visual Studio
       uses: ilammy/msvc-dev-cmd@v1
 
     - name: Install vcpkg
-      uses: microsoft/setup-vcpkg@v1
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Install dependencies with vcpkg
-      run: vcpkg install minhook
+      run: .\vcpkg\vcpkg.exe install minhook
 
     - name: Configure CMake
-      run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ runner.tool_cache }}/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake" -G "Visual Studio 16 2019" -B build
+      run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -G "Visual Studio 16 2022" -A x64 -B build -S .
 
     - name: Build
       run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+    - name: Upload
+      uses: actions/upload-rmi-poc@v4
+      with:
+        name: windows-latest
+        path: ./install_dir/
