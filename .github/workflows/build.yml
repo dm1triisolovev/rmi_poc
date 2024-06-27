@@ -30,7 +30,7 @@ jobs:
         .\vcpkg\bootstrap-vcpkg.bat
 
     - name: Configure CMake
-      run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -G "Visual Studio 16 2022" -A x64 -B build -S .
+      run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -G "Visual Studio 17 2022" -A x64 -B build -S .
 
     - name: Build
       run: cmake --build build --config ${{ env.BUILD_TYPE }}
