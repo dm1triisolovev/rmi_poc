@@ -29,9 +29,6 @@ jobs:
         git clone https://github.com/microsoft/vcpkg.git
         .\vcpkg\bootstrap-vcpkg.bat
 
-    - name: Install dependencies with vcpkg
-      run: .\vcpkg\vcpkg.exe install minhook
-
     - name: Configure CMake
       run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -G "Visual Studio 16 2022" -A x64 -B build -S .
 
