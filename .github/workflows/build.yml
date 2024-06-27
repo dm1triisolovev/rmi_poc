@@ -1,0 +1,35 @@
+name: CMake Build CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CMAKE_VERSION: 3.30
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Build rmi poc
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Visual Studio
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install vcpkg
+      uses: microsoft/setup-vcpkg@v1
+
+    - name: Install dependencies with vcpkg
+      run: vcpkg install minhook
+
+    - name: Configure CMake
+      run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ runner.tool_cache }}/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake" -G "Visual Studio 16 2019" -B build
+
+    - name: Build
+      run: cmake --build build --config ${{ env.BUILD_TYPE }}
