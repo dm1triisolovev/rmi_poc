@@ -25,10 +25,9 @@ jobs:
       with:
         submodules: true
 
-steps:
-- uses: actions/download-artifact@v4
-- name: Display structure of downloaded files
-  run: ls -R
+    - uses: actions/download-artifact@v4
+    - name: Display structure of downloaded files
+      run: ls -R
 
     - name: Set-up Visual Studio
       uses: ilammy/msvc-dev-cmd@v1
