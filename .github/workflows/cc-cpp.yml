@@ -1,4 +1,4 @@
-name: CMake Build CI
+name: CMake
 
 on:
   push:
@@ -15,18 +15,17 @@ jobs:
     name: Build rmi poc
     runs-on: windows-latest
 
+  release-project:
+    name: Release rmi poc
+    runs-on: windows-latest
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         submodules: true
 
-steps:
-- uses: actions/download-artifact@v4
-- name: Display structure of downloaded files
-  run: ls -R
-  
-    - name: Set up Visual Studio
+    - name: Set-up Visual Studio
       uses: ilammy/msvc-dev-cmd@v1
 
     - name: Install CMake
@@ -46,3 +45,16 @@ steps:
 
     - name: Build
       run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+    - name: Release Static
+      uses: actions/upload-artifact@v3
+      with:
+       name: static-site
+       path: .next/
+       
+  release-project:
+   name: Release Project
+   runs-on: windows-latest
+   needs: build-project
+
+      
