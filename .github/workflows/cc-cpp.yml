@@ -1,0 +1,60 @@
+name: CMake
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  CMAKE_VERSION: 3.30
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Build rmi poc
+    runs-on: windows-latest
+
+  release-project:
+    name: Release rmi poc
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Set-up Visual Studio
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install CMake
+      run: |
+        choco install cmake --version ${{ env.CMAKE_VERSION }} --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg.git
+        .\vcpkg\bootstrap-vcpkg.bat
+
+    - name: Install dependencies with vcpkg
+      run: .\vcpkg\vcpkg.exe install
+
+    - name: Configure CMake
+      run: cmake -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake" -G "Visual Studio 17 2022" -A x64 -B build -S .
+
+    - name: Build
+      run: cmake --build build --config ${{ env.BUILD_TYPE }}
+
+    - name: Release Static
+      uses: actions/upload-artifact@v3
+      with:
+       name: static-site
+       path: .next/
+       
+  release-project:
+   name: Release Project
+   runs-on: windows-latest
+   needs: build-project
+
+      
